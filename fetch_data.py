@@ -27,15 +27,15 @@ def sortData(data):
     for element in data["timetable"]["s"]:
         if "dp" in element:
             element_data = {
-                "train_id": str(element["dp"]["@fb"]),
-                "departure_time": 60*int(element["dp"]["@pt"][-4:-2]) + int(element["dp"]["@pt"][-2:]),
+                "id": str(element["dp"]["@fb"]),
+                "departure": 60*int(element["dp"]["@pt"][-4:-2]) + int(element["dp"]["@pt"][-2:]),
                 "destination": "",
-                "stops_ahead": element["dp"]["@ppth"].split("|")
+                "via": element["dp"]["@ppth"].split("|")
             }
-            element_data["destination"] = element_data["stops_ahead"][-1]
+            element_data["destination"] = element_data["via"][-1]
             data_sorted["departures"].append(element_data)
 
-    data_sorted["departures"].sort(key=operator.itemgetter('departure_time'))
+    data_sorted["departures"].sort(key=operator.itemgetter("departure"))
     return data_sorted
 
 def update():
