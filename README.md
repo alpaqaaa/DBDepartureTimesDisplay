@@ -11,7 +11,7 @@ To use the project, you need your own credentials for the DB API Marketplace.
 1. Create or use a DB customer account and register for the DB API Marketplace.  
 2. Create an application in the Marketplace.  
 3. Subscribe your application to the **Timetables** API.  
-4. Use the Client ID and Client Secret (API Key) provided for your application.  
+4. Use the Client ID and Client Secret (API Key) provided for your application in "headers.json" (same syntax as "headers.example.json").  
 
 You can access the DB API Marketplace here:  
 
