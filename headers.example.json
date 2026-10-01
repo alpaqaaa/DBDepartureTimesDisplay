@@ -1,0 +1,5 @@
+{
+    "DB-Client-ID": "<INSERT CLIENT ID>",
+    "DB-Api-Key": "<INSERT API KEY>",
+    "accept": "application/xml"
+}
