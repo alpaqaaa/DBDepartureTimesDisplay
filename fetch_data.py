@@ -5,13 +5,14 @@ from datetime import datetime, timedelta
 with open("settings.json") as f:
     settings = json.loads(f.read())
 
-station_ids = {
-    "Offenbach Hbf": 8000349,
-    "Frankfurt(Main)Hbf": 8000105
-}
-
 with open("headers.json") as f:
     headers = json.loads(f.read())
+
+with open("ibnr_lookup.json") as f:
+    ibnrs = json.loads(f.read())
+
+with open("name_lookup.json") as f:
+    names = json.loads(f.read())
 
 def retrieveData(url):
     response = requests.get(url, headers=headers)
@@ -46,11 +47,11 @@ def update():
     for time in times:
         date = f"{(time.year%100):02}" + f"{time.month:02}" + f"{time.day:02}"
         hour = time.hour
-        if settings["station"] in station_ids:
-            evaNo = station_ids[settings["station"]]
+        if settings["station"] in ibnrs:
+            ibnr = ibnrs[settings["station"]]
         else:
-            evaNo = settings["station"]
-        data = retrieveData(f"https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/plan/{evaNo}/{date}/{hour}")
+            ibnr = settings["station"]
+        data = retrieveData(f"https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/plan/{ibnr}/{date}/{hour}")
         sorted_data.append(sortData(data))
     
     return sorted_data

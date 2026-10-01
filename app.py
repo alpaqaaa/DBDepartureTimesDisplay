@@ -1,5 +1,14 @@
 from tkinter import *
-import stringify_data, json
+import stringify_data, json, time
+
+# ----- SETUP -----
+
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 480
+
+# -----------------
+
+max_nr = (WINDOW_HEIGHT - 45) // 20
 
 def formatTime(n):
     try:
@@ -17,12 +26,18 @@ styles = {
 with open("settings.json") as f:
     settings = json.loads(f.read())
 
+with open("name_lookup.json") as f:
+    names = json.loads(f.read())
+
+if settings["station"] in names:
+    settings["station"] = names[settings["station"]]
+
 root = Tk()
-root.geometry("512x128")
+root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
 root.title(settings["station"])
 
 canvas = Canvas(bg="#0000ff")
-canvas.place(x=0, y=0, width=512, height=128)
+canvas.place(x=0, y=0, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
 
 headers_x_values = {
     0: 5,
@@ -41,20 +56,21 @@ headers = {
 
 content = []
 
-for x in range(20):
-    txt_element = canvas.create_text(headers_x_values[x%4], x//4 * 20 + 45, anchor="nw", font=styles["small"], fill="#ffffff", text="-")
+for x in range(4*max_nr):
+    txt_element = canvas.create_text(headers_x_values[x%4], x//4 * 20 + 45, anchor="nw", font=styles["small"], fill="#ffffff", text="")
     content.append(txt_element)
 
 def updateScreen():
-    trains = stringify_data.retrieveData()
+    trains = stringify_data.retrieveData(max_nr)
 
     for train in enumerate(trains):
         canvas.itemconfig(content[4*train[0]], text=train[1]["id"])
         canvas.itemconfig(content[4*train[0]+1], text=formatTime(train[1]["departure"]))
         canvas.itemconfig(content[4*train[0]+2], text=train[1]["destination"])
-        canvas.itemconfig(content[4*train[0]+3], text=train[1]["via"])
+        canvas.itemconfig(content[4*train[0]+3], text=" | ".join(train[1]["via"]))
 
-    root.after(30000, updateScreen)
+    seconds_until_next_minute = 61 - (time.time() % 60)
+    root.after(int(seconds_until_next_minute * 1000), updateScreen)
 
 updateScreen()
 
