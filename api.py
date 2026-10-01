@@ -18,9 +18,6 @@ station_ids = {
 with open("headers.json") as f:
     headers = json.loads(f.read())
 
-def formatTime(n):
-    return f"{n//60:02}:{n%60:02}"
-
 def retrieveData(url):
     response = requests.get(url, headers=headers)
     data = xmltodict.parse(response.text)
@@ -54,11 +51,3 @@ def update():
     data = retrieveData(f"https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/plan/{evaNo}/{date}/{hour}")
     sorted_data = sortData(data)
     return sorted_data
-
-data = update()
-
-for element in data["departures"]:
-    train_id = element["train_id"]
-    departure_time = formatTime(element["departure_time"])
-    stops_ahead =  " | ".join(element["stops_ahead"])[:200]
-    print(train_id + " "*(10-len(train_id)) + departure_time + " " + stops_ahead)
